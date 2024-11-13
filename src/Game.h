@@ -257,7 +257,7 @@ void Game()
 		// set_multiply_color(make_color_rgb(255,0,255));
 		// print_at(0,10,Debug);
 		// set_multiply_color(color_white);
-		// end_frame();
+		end_frame();
 	}
 	CInput_Destroy(Input);
 	// if (GlobalSoundEnabled)
