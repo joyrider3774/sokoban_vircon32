@@ -166,35 +166,41 @@ void Game()
 				}
 				CWorldPart_MoveTo(Player, Player->PlayFieldX + 1, Player->PlayFieldY,false);
 			}
-
-			if ( CInput_Ready(Input) &&  !(Input->JoystickHeld[0][(BUT_A)]) && 
-				(Input->JoystickHeld[0][(BUT_LEFT)]))
+			else
 			{
-				if (CWorldPart_CanMoveTo(Player, Player->PlayFieldX - 1, Player->PlayFieldY))
+				if ( CInput_Ready(Input) &&  !(Input->JoystickHeld[0][(BUT_A)]) && 
+					(Input->JoystickHeld[0][(BUT_LEFT)]))
 				{
-					CWorldParts_HistoryAdd(WorldParts);
+					if (CWorldPart_CanMoveTo(Player, Player->PlayFieldX - 1, Player->PlayFieldY))
+					{
+						CWorldParts_HistoryAdd(WorldParts);
+					}
+					CWorldPart_MoveTo(Player, Player->PlayFieldX - 1, Player->PlayFieldY,false);
 				}
-				CWorldPart_MoveTo(Player, Player->PlayFieldX - 1, Player->PlayFieldY,false);
-			}
-
-			if ( CInput_Ready(Input) && !(Input->JoystickHeld[0][(BUT_A)]) &&
-				(Input->JoystickHeld[0][(BUT_UP)]))
-			{
-				if (CWorldPart_CanMoveTo(Player, Player->PlayFieldX , Player->PlayFieldY-1))
+				else
 				{
-					CWorldParts_HistoryAdd(WorldParts);
+					if ( CInput_Ready(Input) && !(Input->JoystickHeld[0][(BUT_A)]) &&
+						(Input->JoystickHeld[0][(BUT_UP)]))
+					{
+						if (CWorldPart_CanMoveTo(Player, Player->PlayFieldX , Player->PlayFieldY-1))
+						{
+							CWorldParts_HistoryAdd(WorldParts);
+						}
+						CWorldPart_MoveTo(Player, Player->PlayFieldX, Player->PlayFieldY - 1,false);
+					}
+					else
+					{
+						if ( CInput_Ready(Input) && !(Input->JoystickHeld[0][(BUT_A)]) &&
+							(Input->JoystickHeld[0][(BUT_DOWN)]))
+						{
+							if (CWorldPart_CanMoveTo(Player, Player->PlayFieldX , Player->PlayFieldY+1))
+							{
+								CWorldParts_HistoryAdd(WorldParts);
+							}
+							CWorldPart_MoveTo(Player, Player->PlayFieldX, Player->PlayFieldY +1,false);
+						}
+					}
 				}
-				CWorldPart_MoveTo(Player, Player->PlayFieldX, Player->PlayFieldY - 1,false);
-			}
-
-			if ( CInput_Ready(Input) && !(Input->JoystickHeld[0][(BUT_A)]) &&
-				(Input->JoystickHeld[0][(BUT_DOWN)]))
-			{
-				if (CWorldPart_CanMoveTo(Player, Player->PlayFieldX , Player->PlayFieldY+1))
-				{
-					CWorldParts_HistoryAdd(WorldParts);
-				}
-				CWorldPart_MoveTo(Player, Player->PlayFieldX, Player->PlayFieldY +1,false);
 			}
 		}
 		drawTexture(IMGBackground,0,0,0);
