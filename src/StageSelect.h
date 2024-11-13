@@ -1,6 +1,7 @@
 #ifndef STAGESELECT_H
 #define STAGESELECT_H
 
+#include "Defines.h"
 #include "string.h"
 #include "Texture.h"
 #include "StageSelect.h"
