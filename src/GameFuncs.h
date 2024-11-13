@@ -2,6 +2,7 @@
 #define GAMEFUNCS_H
 
 #include "Texture.h"
+#include "memcard.h"
 #include "libs/TextFonts/textfont.h"
 #include "libs/DrawPrimitives/draw_primitives.h"
 #include "fonts/Roboto_Black_20.h"
@@ -12,6 +13,8 @@
 #include "Vircoban.h"
 #include "Common.h"
 #include "CInput.h"
+
+#define levelLocksSavePosition 100
 
 void setupFonts()
 {
@@ -44,38 +47,26 @@ void WriteText(textfont* font, int* text, int x, int y, int color)
 
 void LoadSettings()
 {
-	// FILE *Fp;
-	// int Filename[FILENAME_MAX];
-	// sprintf(Filename, "%s/.sokoban_settings.dat", getenv("HOME") == NULL ? ".": getenv("HOME"));
-	// Fp = fopen(Filename,"rt");
-	// if (Fp)
-	// {
-	// 	int * tmpName = (int *)malloc(sizeof(int) * 260);
-	// 	fscanf(Fp,"SelectedLevelPack=%100[^\n]\n",tmpName);
-	// 	for (int i = 0; i < InstalledLevelPacksCount; i++)
-	// 		if(strcasecmp(tmpName, InstalledLevelPacks[i]) == 0)
-	// 		{
-	// 			SelectedLevelPack = i;
-	// 			sprintf(LevelPackName,"%s",InstalledLevelPacks[SelectedLevelPack]);
-	// 			break;
-	// 		}
-	// 	free(tmpName);
-	// 	fclose(Fp);
-	// }
-
+	SelectedLevelPack = 0;
+	if(card_is_connected())
+		if(card_signature_matches(&GameSignature))
+		{
+			card_read_data(&SelectedLevelPack, levelLocksSavePosition -1, sizeof (SelectedLevelPack));			
+		}
+	if((SelectedLevelPack < 0) || (SelectedLevelPack >= InstalledLevelPacksCount))
+		SelectedLevelPack = 0;
+	strcpy(LevelPackName,InstalledLevelPacks[SelectedLevelPack]);
 }
+
 
 void SaveSettings()
 {
-	// FILE *Fp;
-	// int Filename[FILENAME_MAX];
-	// sprintf(Filename, "%s/.sokoban_settings.dat", getenv("HOME") == NULL ? ".": getenv("HOME"));
-	// Fp = fopen(Filename,"wt");
-	// if (Fp)
-	// {
-	// 	fprintf(Fp,"SelectedLevelPack=%s\n",LevelPackName);
-	// 	fclose(Fp);
-	// }
+	if(card_is_connected())
+		if(card_is_empty() || card_signature_matches( &GameSignature ))
+		{
+			card_write_signature(&GameSignature);
+			card_write_data(&SelectedLevelPack, levelLocksSavePosition -1, sizeof (SelectedLevelPack));	
+		}
 }
 
 
@@ -179,32 +170,24 @@ void PrintForm(int *msg)
 
 void SaveUnlockData()
 {
-	// FILE *Fp;
-	// int Filename[FILENAME_MAX];
-	// sprintf(Filename,"%s/%s.dat",getenv("HOME") == NULL ? ".": getenv("HOME"),LevelPackName);
-	// Fp = fopen(Filename,"wb");
-	// if (Fp)
-	// {
-	// 	fwrite(&UnlockedLevels,sizeof(int),1,Fp);
-	// 	fclose(Fp);
-	// }
+	if(card_is_connected())
+		if(card_is_empty() || card_signature_matches( &GameSignature ))
+		{
+			card_write_signature(&GameSignature);
+			card_write_data(&UnlockedLevels, levelLocksSavePosition + SelectedLevelPack, sizeof (UnlockedLevels));			
+		}
 }
 
 void LoadUnlockData()
 {
-	// FILE *Fp;
- 	// UnlockedLevels = 1;
-	// int Filename[FILENAME_MAX];
-	// sprintf(Filename,"%s/%s.dat",getenv("HOME") == NULL ? ".": getenv("HOME"),LevelPackName);
-	// Fp = fopen(Filename,"rb");
-	// if (Fp)
-	// {
-	// 	fread(&UnlockedLevels,sizeof(int),1,Fp);
-	// 	fclose(Fp);
-	// 	if ((UnlockedLevels > InstalledLevels) || (UnlockedLevels < 1))
-	// 		UnlockedLevels = 1;
-	// }
-	UnlockedLevels = InstalledLevels;
+	UnlockedLevels = 1;
+	if(card_is_connected())
+		if(card_signature_matches(&GameSignature))
+		{
+			card_read_data(&UnlockedLevels, levelLocksSavePosition + SelectedLevelPack, sizeof (UnlockedLevels));			
+		}
+	if((UnlockedLevels < 1) || (UnlockedLevels > InstalledLevels))
+		UnlockedLevels = 1;
 }
 
 

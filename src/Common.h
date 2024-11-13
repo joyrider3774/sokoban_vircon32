@@ -3,6 +3,7 @@
 
 #include "Texture.h"
 #include "libs/TextFonts/textfont.h"
+#include "memcard.h"
 #include "Defines.h"
 
 Texture *IMGBackground=NULL,IMGFloor=NULL,IMGPlayer=NULL,IMGBox=NULL,IMGSpot=NULL,IMGEmpty=NULL,IMGWall=NULL,IMGTitleScreen=NULL;
@@ -16,5 +17,6 @@ int[MaxLevelPacks][MaxLevelPackNameLength] InstalledLevelPacks;
 int[MaxMusicFiles] Music;
 int[NrOfSounds] Sounds;
 bool isCustomnTitleScreen;
+game_signature GameSignature;
 
 #endif

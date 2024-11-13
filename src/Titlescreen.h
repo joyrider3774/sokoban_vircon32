@@ -38,6 +38,7 @@ void TitleScreen()
 						strcpy(LevelPackName,InstalledLevelPacks[SelectedLevelPack]);									
 						CLevelPackFile_loadFile(LevelPackFile, SelectedLevelPack, NrOfCols, NrOfRows, true);									
 						CAudio_PlaySound(Sounds[SND_MENU],0);
+						SaveSettings();
 					}
 			CInput_Delay(Input);
 		}
@@ -52,6 +53,7 @@ void TitleScreen()
 						strcpy(LevelPackName,InstalledLevelPacks[SelectedLevelPack]);
 						CLevelPackFile_loadFile(LevelPackFile, SelectedLevelPack, NrOfCols, NrOfRows, true);
 						CAudio_PlaySound(Sounds[SND_MENU],0);
+						SaveSettings();
 					}
 			CInput_Delay(Input);
 		}

@@ -1,3 +1,4 @@
+#include "memcard.h"
 #include "string.h"
 #include "time.h"
 #include "GameFuncs.h"
@@ -14,6 +15,8 @@
 
 void main()
 {
+	memset( &GameSignature, 0, sizeof( game_signature ) );
+    strcpy( GameSignature, "Vircoban_V1" );
 	srand(get_time() + get_date());
 	initDebugSpeed();
 	setupFonts();
