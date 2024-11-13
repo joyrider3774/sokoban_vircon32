@@ -7,6 +7,7 @@
 #include "GameFuncs.h"
 #include "CInput.h"
 #include "Debugspeed.h"
+
 bool StageDone()
 {
 	int Teller,FilledSpots=0,Spots=0;
@@ -55,6 +56,9 @@ void Game()
 
 	while (GameState == GSGame)
 	{
+#ifdef DEBUG
+		StartDebugSpeed(3);
+#endif
         CInput_Update(Input);
 
 		if ( CInput_Ready(Input) &&  (Input->JoystickHeld[0][(BUT_B)]) )
@@ -245,18 +249,22 @@ void Game()
 
 			}
 		}
-
-		// 	int[500] Debug;
-		// int[100] Nr;
-		// itoa(MemoryUsed(), Nr, 10);
-		// strcpy(Debug, "RAM: ");
-		// strcat(Debug, Nr);
-		// itoa(WorldParts->ItemCount, Nr, 10);
-		// strcat(Debug, "\nITEMS: ");
-		// strcat(Debug, Nr);
-		// set_multiply_color(make_color_rgb(255,0,255));
-		// print_at(0,10,Debug);
-		// set_multiply_color(color_white);
+#ifdef DEBUG
+		StopDebugSpeed(3);
+		int[500] Debug;
+		int[100] Nr;
+		itoa(MemoryUsed(), Nr, 10);
+		strcpy(Debug, "RAM: ");
+		strcat(Debug, Nr);
+		itoa(WorldParts->ItemCount, Nr, 10);
+		strcat(Debug, "\nITEMS: ");
+		strcat(Debug, Nr);
+		set_multiply_color(make_color_rgb(255,0,255));
+		print_at(0,10,Debug);
+		printDebugSpeed(1, 0,60,"LVL LOAD", 1.0);
+		printDebugSpeed(3, 0,80,"FRAME G", 1.0);
+        set_multiply_color(color_white);
+#endif
 		end_frame();
 	}
 	CInput_Destroy(Input);

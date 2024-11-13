@@ -1051,7 +1051,9 @@ void CWorldParts_Move(CWorldParts* WorldParts)
 
 bool CWorldParts_LoadFromLevelPackFile(CWorldParts* WorldParts, CLevelPackFile* LPFile, int level, bool doCenterLevel)
 {
+#ifdef DEBUG
 	StartDebugSpeed(1);
+#endif	
 	WorldParts->isLevelPackFileLevel = true;
 	CWorldParts_RemoveAll(WorldParts);
 	if(level <= LPFile->LevelCount)
@@ -1097,10 +1099,14 @@ bool CWorldParts_LoadFromLevelPackFile(CWorldParts* WorldParts, CLevelPackFile* 
 		CWorldParts_Sort(WorldParts);
 		//move once to highlight boxes on spots
 		CWorldParts_Move(WorldParts);
+#ifdef DEBUG
 		StopDebugSpeed(1);
+#endif
 		return true;
 	}
+#ifdef DEBUG
 	StopDebugSpeed(1);
+#endif
 	return false;
 }
 

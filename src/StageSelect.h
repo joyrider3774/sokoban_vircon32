@@ -30,6 +30,9 @@ void StageSelect()
 
 	while (GameState == GSStageSelect)
 	{
+#ifdef DEBUG
+		StartDebugSpeed(2);
+#endif
 		drawTexture(IMGBackground,0,0,0);
 		if (SelectedLevel > 0)
 		{
@@ -124,19 +127,6 @@ void StageSelect()
 			}
 			CInput_Delay(Input);
 		}
-
-		// int[500] Debug;
-		// int[100] Nr;
-		// itoa(MemoryUsed(), Nr, 10);
-		// strcpy(Debug, "RAM: ");
-		// strcat(Debug, Nr);
-		// itoa(WorldParts->ItemCount, Nr, 10);
-		// strcat(Debug, "\nITEMS: ");
-		// strcat(Debug, Nr);
-		// set_multiply_color(make_color_rgb(255,0,255));
-		// print_at(0,10,Debug);
-		// printDebugSpeed(1, 0,60,"LVL LOAD", 1.0);
-        // set_multiply_color(color_white);
 		
 		if ( CInput_Ready(Input) &&  (Input->JoystickHeld[0][(BUT_L)]))
 		{
@@ -193,7 +183,22 @@ void StageSelect()
 			}
 			CInput_Delay(Input);
 		}
-
+#ifdef DEBUG
+		StopDebugSpeed(2);
+		int[500] Debug;
+		int[100] Nr;
+		itoa(MemoryUsed(), Nr, 10);
+		strcpy(Debug, "RAM: ");
+		strcat(Debug, Nr);
+		itoa(WorldParts->ItemCount, Nr, 10);
+		strcat(Debug, "\nITEMS: ");
+		strcat(Debug, Nr);
+		set_multiply_color(make_color_rgb(255,0,255));
+		print_at(0,10,Debug);
+		printDebugSpeed(1, 0,60,"LVL LOAD", 1.0);
+		printDebugSpeed(2, 0,80,"FRAME S", 1.0);
+        set_multiply_color(color_white);
+#endif
 		end_frame();
 
 	}

@@ -18,7 +18,9 @@ void main()
 	memset( &GameSignature, 0, sizeof( game_signature ) );
     strcpy( GameSignature, "Vircoban_V1" );
 	srand(get_time() + get_date());
+#ifdef DEBUG
 	initDebugSpeed();
+#endif
 	setupFonts();
 	setupLevels();
 	CAudio_Init();

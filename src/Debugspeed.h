@@ -1,6 +1,7 @@
 #ifndef DEBUGSPEED_H
 #define DEBUGSPEED_H
 
+#include "Defines.h"
 #include "string.h"
 #include "time.h"
 #include "video.h"
@@ -8,7 +9,10 @@
 
 #define MAXDEBUGSPEEDS 100
 #define USEPERCENTAGES true
+#define MAXDEBUGSPEEDSENABLED false
+#ifdef DEBUG
 #define MAXDEBUGSPEEDSENABLED true
+#endif
 
 int[MAXDEBUGSPEEDS] DebugSpeedMaxValues;
 int[MAXDEBUGSPEEDS] DebugSpeedValues;

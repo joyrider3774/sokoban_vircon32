@@ -147,19 +147,7 @@ void TitleScreen()
 			else
 				strcpy(Tekst,">>");
 			WriteText(RobotoSmall,Tekst,55*UI_WIDTH_SCALE,87*UI_HEIGHT_SCALE,MenuTextColor);
-
-		// 	int[500] Debug;
-		// int[100] Nr;
-		// itoa(MemoryUsed(), Nr, 10);
-		// strcpy(Debug, "RAM: ");
-		// strcat(Debug, Nr);
-		// itoa(WorldParts->ItemCount, Nr, 10);
-		// strcat(Debug, "\nITEMS: ");
-		// strcat(Debug, Nr);
-		// set_multiply_color(make_color_rgb(255,0,255));
-		// print_at(0,10,Debug);
-		// set_multiply_color(color_white);
-		end_frame();
+			end_frame();
 		}
 	}
 	CInput_Destroy(Input);
