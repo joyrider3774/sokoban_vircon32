@@ -1,7 +1,7 @@
 #ifndef DEFINES_H
 #define DEFINES_H
 
-#define DEBUG 1
+//#define DEBUG 1
 
 #define ORIG_WINDOW_WIDTH 640
 #define ORIG_WINDOW_HEIGHT 360 
