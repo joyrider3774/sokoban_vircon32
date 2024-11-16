@@ -292,7 +292,7 @@ void printTitleInfo()
 
 		if(strlen(LevelPackFile->author) > 0)
 		{
-			strcpy(Tekst, "Levels By ");
+			strcpy(Tekst, "Levels by ");
 			strcat(Tekst, LevelPackFile->author);
 			w = textfont_get_line_width(RobotoMedium, Tekst);
 			WriteText(RobotoMedium, Tekst, (ORIG_WINDOW_WIDTH - w) / 2, 290, TitleColor);
