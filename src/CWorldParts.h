@@ -1058,40 +1058,37 @@ bool CWorldParts_LoadFromLevelPackFile(CWorldParts* WorldParts, CLevelPackFile* 
 	CWorldParts_RemoveAll(WorldParts);
 	if(level <= LPFile->LevelCount)
 	{
+		int lvl = level-1;
 		WorldParts->DisableSorting=true;
 		WorldParts->Pushes = 0;
 		WorldParts->Moves = 0;
-		int Xi = ((NrOfCols-1) / 2) - ( LPFile->LevelsMeta[level-1].maxx +  LPFile->LevelsMeta[level-1].minx) / 2;
-		int Yi = ((NrOfRows-1) / 2) - ( LPFile->LevelsMeta[level-1].maxy +  LPFile->LevelsMeta[level-1].miny) / 2;
+		int Xi = ((NrOfCols-1) / 2) - ( LPFile->LevelsMeta[lvl].maxx +  LPFile->LevelsMeta[lvl].minx) / 2;
+		int Yi = ((NrOfRows-1) / 2) - ( LPFile->LevelsMeta[lvl].maxy +  LPFile->LevelsMeta[lvl].miny) / 2;
 		if(!doCenterLevel)
 		{
 			Xi = 0;
 			Yi = 0;
 		}
-		for (int i=0; i< LPFile->LevelsMeta[level-1].parts; i++ )
+
+		LevelPart * Part;
+		for (int i=0; i< LPFile->LevelsMeta[lvl].parts; i++ )
 		{
-			int Type = LPFile->Levels[level-1][i].id;
-			int X = LPFile->Levels[level-1][i].x + Xi;
-			int Y = LPFile->Levels[level-1][i].y + Yi;
-			switch(Type)
+			Part = &LPFile->Levels[lvl][i];
+			switch(Part->id)
 			{
 				case IDWall:
-					CWorldParts_Add(WorldParts, CWorldPart_Create(X,Y,false,Type));
+					CWorldParts_Add(WorldParts, CWorldPart_Create(Part->x + Xi,Part->y + Yi,false,Part->id));
 					break;				
 				case IDBox:
-					CWorldParts_Add(WorldParts, CWorldPart_Create(X,Y,true,Type));
+					CWorldParts_Add(WorldParts, CWorldPart_Create(Part->x + Xi,Part->y + Yi,true,Part->id));
 					break;
 				case IDSpot:
-					CWorldParts_Add(WorldParts, CWorldPart_Create(X,Y,false,Type));
+					CWorldParts_Add(WorldParts, CWorldPart_Create(Part->x + Xi,Part->y + Yi,false,Part->id));
 					break;
 				case IDPlayer:
-					WorldParts->Player = CWorldPart_Create(X,Y,true,Type);
+					WorldParts->Player = CWorldPart_Create(Part->x + Xi,Part->y + Yi,true,Part->id);
 					CWorldParts_Add(WorldParts, WorldParts->Player);
 					break;
-				
-				// case IDFloor:
-				// 	CWorldParts_Add(WorldParts, CWorldPart_Create(X,Y,false,Type));
-				// 	break;
 			}
 		}
 		CWorldParts_AddFloors(WorldParts, WorldParts->Player);

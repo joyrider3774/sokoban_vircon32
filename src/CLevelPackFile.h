@@ -5,9 +5,10 @@
 #include "CLevelPackFile.h"
 #include "Defines.h"
 #include "Levels.h"
+#include "Debugspeed.h"
 
 #define MAXLEVELS 355
-#define MAXITEMCOUNT NrOfCols*NrOfRows
+#define MAXITEMCOUNT (NrOfCols*NrOfRows) + 2
 
 #define MAXCOMMENTLEN 150
 #define MAXSETLEN 50
@@ -35,8 +36,6 @@ struct LevelPart
 
 struct LevelMeta
 {
-	int width;
-	int height;
 	int minx;
 	int miny;
 	int maxx;
@@ -89,21 +88,20 @@ int *strstr(int *s1, int *s2)
 
 void StringToLower(int *s)
 {
-	int n = strlen(s);
-	for (int i = 0; i < n; i++)
-		s[i] = tolower(s[i]);
+	while(*s)
+	{
+		*s = tolower(*s);
+		s++;
+	}
 }
 
 int *strchr(int *s, int c)
 {
-   while(*s != c && *s != 0) {
-      s++;
-   }
-   if(*s == c) {
-      return s;
-   }else {
-      return NULL;
-   }
+	int n = 1;
+    while(*s)
+        if(!memcmp(s++,&c,n))
+            return (int *) (s-1);
+    return NULL;
 }
 
 bool CLevelPackFile_parseText(CLevelPackFile *LevelPackFile, int* text, int maxWidth, int maxHeight, bool MetaOnly)
@@ -115,20 +113,21 @@ bool CLevelPackFile_parseText(CLevelPackFile *LevelPackFile, int* text, int maxW
 	int* pchar = text;
 	int* pdoublepoint, pset, pauthor;
 	int y;
-	int ilen;
 	bool inlevel = false;
 	LevelPackFile->LevelCount = 0;
 	memset(LevelPackFile->author, 0, MAXAUTHORLEN);
 	memset(LevelPackFile->set, 0, MAXSETLEN);
+	LevelMeta* levelMeta = &LevelPackFile->LevelsMeta[LevelPackFile->LevelCount];
 	while(*pchar != 0)
 	{
 		linepos = 0;
 		while((*pchar != '\n') && (*pchar != 0))
 		{
-			if(*pchar != '\r')
-				if(linepos < MAXLINELEN-1)
-					line[linepos++] = tolower(*pchar);
-			pchar++;			
+			if((*pchar != '\r') && (linepos < MAXLINELEN-1))
+			{
+				line[linepos++] = tolower(*pchar);
+			}
+			pchar++;
 		}
 
 		if(*pchar == 0)
@@ -137,7 +136,7 @@ bool CLevelPackFile_parseText(CLevelPackFile *LevelPackFile, int* text, int maxW
 		pchar++;
 
 		line[linepos] = 0;
-		int* pline = line;	
+		int* pline = line;
 
 		if(LevelPackFile->LevelCount == 0)
 		{
@@ -147,11 +146,7 @@ bool CLevelPackFile_parseText(CLevelPackFile *LevelPackFile, int* text, int maxW
 				pset+= 4;
 				while(*pset == ' ')
 					pset++;
-				ilen = strlen(pset);
-				if(ilen < MAXSETLEN-1)
-					strncpy(LevelPackFile->set, pset, ilen);
-				else
-					strncpy(LevelPackFile->set, pset, MAXSETLEN-1);
+				strncpy(LevelPackFile->set, pset, MAXSETLEN-1);
 			}
 
 			pauthor = strstr(line, "author:");
@@ -160,19 +155,15 @@ bool CLevelPackFile_parseText(CLevelPackFile *LevelPackFile, int* text, int maxW
 				pauthor+= 7;
 				while(*pauthor == ' ')
 					pauthor++;
-				ilen = strlen(pauthor);
-				if(ilen < MAXAUTHORLEN-1)
-					strncpy(LevelPackFile->author, pauthor, ilen);
-				else
-					strncpy(LevelPackFile->author, pauthor, MAXAUTHORLEN-1);
+				strncpy(LevelPackFile->author, pauthor, MAXAUTHORLEN-1);
 			}
 		}
 
 		//found double point while in a level start a metadata field
-		pdoublepoint = strstr(line, ":");			
+		pdoublepoint = strstr(line, ":");
 		if(inlevel && pdoublepoint)
 		{
-			if(strlen(levelField) > 0)
+			if(levelField[0] != 0)
 			{
 				int* ptmp = levelFieldValue;
 				while(*ptmp == ' ')
@@ -180,42 +171,30 @@ bool CLevelPackFile_parseText(CLevelPackFile *LevelPackFile, int* text, int maxW
 				StringToLower(levelField);
 				if (strcmp(levelField, "title") == 0)
 				{
-					ilen = strlen(ptmp);
-					if(ilen < MAXTITLELEN-1)
-						strncpy(LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].title, ptmp, ilen);
-					else
-						strncpy(LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].title, ptmp, MAXTITLELEN-1);
+					strncpy(levelMeta->title, ptmp, MAXTITLELEN-1);
 				}
 
 				if (strcmp(levelField, "author") == 0)
 				{
-					ilen = strlen(ptmp);
-					if(ilen < MAXAUTHORLEN-1)
-						strncpy(LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].author, ptmp, ilen);
-					else
-						strncpy(LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].author, ptmp, MAXAUTHORLEN-1);
+					strncpy(levelMeta->author, ptmp, MAXAUTHORLEN-1);
 				}
 
 				if (strcmp(levelField, "comment") == 0)
 				{
-					ilen = strlen(ptmp);
-					if(ilen < MAXCOMMENTLEN-1)
-						strncpy(LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].comments, ptmp, ilen);
-					else
-						strncpy(LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].comments, ptmp, MAXCOMMENTLEN-1);
+					strncpy(levelMeta->comments, ptmp, MAXCOMMENTLEN-1);
 				}
 			}	
 			memset(levelFieldValue, 0, MAXLEVELFIELDDATALEN);
 			memset(levelField, 0, MAXLEVELFIELDLEN);
 			strncpy(levelField, line, pdoublepoint - &line[0]);
-			strncpy(levelFieldValue, pdoublepoint +1, strlen(line));
+			strncpy(levelFieldValue, pdoublepoint +1, MAXLEVELFIELDDATALEN - 1);
 			continue;
 		}
 		
 		//we are in a level but found no empty line and no doublepoint then we are then in a multiline metadata field just append its value
 		if(inlevel && !(*pline == 0) && !pdoublepoint && (levelField[0] != 0))
 		{
-			if(strlen(levelFieldValue) > 0)
+			if(levelFieldValue[0] != 0)
 				strcat(levelFieldValue, "\n");
 			strcat(levelFieldValue, line);
 			continue;
@@ -224,7 +203,7 @@ bool CLevelPackFile_parseText(CLevelPackFile *LevelPackFile, int* text, int maxW
 		//we are in a level and found a empty line then assume level end
 		if(inlevel && (*pline == 0))
 		{
-			if(strlen(levelField) > 0)
+			if(levelField[0] != 0)
 			{
 				int* ptmp = levelFieldValue;
 				while(*ptmp == ' ')
@@ -232,143 +211,126 @@ bool CLevelPackFile_parseText(CLevelPackFile *LevelPackFile, int* text, int maxW
 				StringToLower(levelField);
 				if (strcmp(levelField, "title") == 0)
 				{
-					ilen = strlen(ptmp);
-					if(ilen < MAXTITLELEN-1)
-						strncpy(LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].title, ptmp, ilen);
-					else
-						strncpy(LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].title, ptmp, MAXTITLELEN-1);
+					strncpy(levelMeta->title, ptmp, MAXTITLELEN-1);
 				}
 
 				if (strcmp(levelField, "author") == 0)
 				{
-					ilen = strlen(ptmp);
-					if(ilen < MAXAUTHORLEN-1)
-						strncpy(LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].author, ptmp, ilen);
-					else
-						strncpy(LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].author, ptmp, MAXAUTHORLEN-1);
+					strncpy(levelMeta->author, ptmp, MAXAUTHORLEN-1);
 				}
 
 				if (strcmp(levelField, "comment") == 0)
 				{
-					ilen = strlen(ptmp);
-					if(ilen < MAXCOMMENTLEN-1)
-						strncpy(LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].comments, ptmp, ilen);
-					else
-						strncpy(LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].comments, ptmp, MAXCOMMENTLEN-1);
+					strncpy(levelMeta->comments, ptmp, MAXCOMMENTLEN-1);
 				}
 			}
 			//clear them for if condition above conerning level start
 			memset(levelFieldValue, 0, MAXLEVELFIELDDATALEN);
 			memset(levelField, 0, MAXLEVELFIELDLEN);
 			inlevel = false;
-			if((LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].width <= maxWidth) && 
-				(LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].height <= maxHeight))
+			if((levelMeta->maxx+1 <= maxWidth) && 
+				(levelMeta->maxy+1 <= maxHeight))
+			{
 				LevelPackFile->LevelCount++;
+				levelMeta = &LevelPackFile->LevelsMeta[LevelPackFile->LevelCount];
+			}
 			continue;
 		}
 
 		//we are not in a level and found a wall and no doublepoint and we are not in a levelfield then assume levelstart
-		if (!inlevel && (strchr(line, LPWall)) && !pdoublepoint && (levelField[0] == 0))
+		if (!inlevel && !pdoublepoint && (levelField[0] == 0) && (strchr(line, LPWall)))
 		{
 			if (MetaOnly)
 				return true;
 			inlevel=true;
 			y = 0;
-			LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].width = 0;
-			LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].height = 0;
-			LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].minx = NrOfCols;
-			LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].miny = NrOfRows;
-			LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].maxx = 0;
-			LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].maxy = 0;
-			memset(LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].author, 0, MAXAUTHORLEN);
-			memset(LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].title, 0, MAXTITLELEN);
-			memset(LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].comments, 0, MAXCOMMENTLEN);
-			LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts = 0;
+			levelMeta->minx = NrOfCols;
+			levelMeta->miny = NrOfRows;
+			levelMeta->maxx = 0;
+			levelMeta->maxy = 0;
+			memset(levelMeta->author, 0, MAXAUTHORLEN);
+			memset(levelMeta->title, 0, MAXTITLELEN);
+			memset(levelMeta->comments, 0, MAXCOMMENTLEN);
+			levelMeta->parts = 0;
 		}
 
 		//we are in level and not in a level meta field
 		if(inlevel && (levelField[0] == 0))
-		{
-			int linelen = strlen(line);
-			for(int x = 0; x < linelen; x++)
+		{			
+			for(int x = 0; x < linepos; x++)
 			{
+				//there should be always still a wall so it's safe
+				if (line[x] == ' ')
+					continue;
+				
+
+				LevelPart* levelPart = &LevelPackFile->Levels[LevelPackFile->LevelCount][LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts];
+				
 				//DON'T EXCEED MAX ITEMCOUNT!
-				if(LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts >= MAXITEMCOUNT)
+				if(levelMeta->parts+2 >= MAXITEMCOUNT)
 				{
-					LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].width = 1000;
+					levelMeta->maxx = 1000;
 					break;
 				}
-
+				
 				switch(line[x])
 				{
-					case LPBox:
-						LevelPackFile->Levels[LevelPackFile->LevelCount][LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts].x = x;
-						LevelPackFile->Levels[LevelPackFile->LevelCount][LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts].y = y;
-						LevelPackFile->Levels[LevelPackFile->LevelCount][LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts].id = IDBox;
-						LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts++;
+					case LPWall:
+						if(x < levelMeta->minx)
+							levelMeta->minx = x;
+						if(x > levelMeta->maxx)
+							levelMeta->maxx = x;
+						if(y < levelMeta->miny)
+							levelMeta->miny = y;
+						if(y > levelMeta->maxy)
+							levelMeta->maxy = y;
+						levelPart->x = x;
+						levelPart->y = y;
+						levelPart->id = IDWall;
+						levelMeta->parts++;
 						break;
-					case LPPlayer:
-						LevelPackFile->Levels[LevelPackFile->LevelCount][LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts].x = x;
-						LevelPackFile->Levels[LevelPackFile->LevelCount][LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts].y = y;
-						LevelPackFile->Levels[LevelPackFile->LevelCount][LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts].id = IDPlayer;
-						LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts++;
+					case LPBox:
+						levelPart->x = x;
+						levelPart->y = y;
+						levelPart->id = IDBox;
+						levelMeta->parts++;
 						break;
 					case LPBoxOnSpot:
-						LevelPackFile->Levels[LevelPackFile->LevelCount][LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts].x = x;
-						LevelPackFile->Levels[LevelPackFile->LevelCount][LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts].y = y;
-						LevelPackFile->Levels[LevelPackFile->LevelCount][LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts].id = IDSpot;
-						LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts++;
-						//DON'T EXCEED MAX ITEMCOUNT!
-						if(LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts >= MAXITEMCOUNT)
-						{
-							LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].width = 1000;
-							break;
-						}
-						LevelPackFile->Levels[LevelPackFile->LevelCount][LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts].x = x;
-						LevelPackFile->Levels[LevelPackFile->LevelCount][LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts].y = y;
-						LevelPackFile->Levels[LevelPackFile->LevelCount][LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts].id = IDBox;
-						LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts++;
+						levelPart->x = x;
+						levelPart->y = y;
+						levelPart->id = IDSpot;
+						levelMeta->parts++;
+						
+						levelPart = &LevelPackFile->Levels[LevelPackFile->LevelCount][levelMeta->parts];
+						
+						levelPart->x = x;
+						levelPart->y = y;
+						levelPart->id = IDBox;
+						levelMeta->parts++;
 						break;
 					case LPSpot:
-						LevelPackFile->Levels[LevelPackFile->LevelCount][LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts].x = x;
-						LevelPackFile->Levels[LevelPackFile->LevelCount][LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts].y = y;
-						LevelPackFile->Levels[LevelPackFile->LevelCount][LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts].id = IDSpot;
-						LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts++;
+						levelPart->x = x;
+						levelPart->y = y;
+						levelPart->id = IDSpot;
+						levelMeta->parts++;
 						break;
 					case LPPlayerOnSpot:
-						LevelPackFile->Levels[LevelPackFile->LevelCount][LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts].x = x;
-						LevelPackFile->Levels[LevelPackFile->LevelCount][LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts].y = y;
-						LevelPackFile->Levels[LevelPackFile->LevelCount][LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts].id = IDSpot;
-						LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts++;
-						//DON'T EXCEED MAX ITEMCOUNT!
-						if(LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts >= MAXITEMCOUNT)
-						{
-							LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].width = 1000;
-							break;
-						}
-						LevelPackFile->Levels[LevelPackFile->LevelCount][LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts].x = x;
-						LevelPackFile->Levels[LevelPackFile->LevelCount][LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts].y = y;
-						LevelPackFile->Levels[LevelPackFile->LevelCount][LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts].id = IDPlayer;
-						LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts++;
-						break;
-					case LPWall:						
-						if(x < LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].minx)
-							LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].minx = x;
-						if(x > LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].maxx)
-							LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].maxx = x;						
-						if(y < LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].miny)
-							LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].miny = y;
-						if(y > LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].maxy)
-							LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].maxy = y;
+						levelPart->x = x;
+						levelPart->y = y;
+						levelPart->id = IDSpot;
 
-						if(LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].width < x+1)
-							LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].width = x+1;
-						if(LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].height < y+1)
-							LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].height = y+1;
-						LevelPackFile->Levels[LevelPackFile->LevelCount][LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts].x = x;
-						LevelPackFile->Levels[LevelPackFile->LevelCount][LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts].y = y;
-						LevelPackFile->Levels[LevelPackFile->LevelCount][LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts].id = IDWall;
-						LevelPackFile->LevelsMeta[LevelPackFile->LevelCount].parts++;
+						levelPart = &LevelPackFile->Levels[LevelPackFile->LevelCount][levelMeta->parts];
+						
+						levelPart->x = x;
+						levelPart->y = y;
+						levelPart->id = IDPlayer;
+						levelMeta->parts++;
+						break;
+					case LPPlayer:
+						levelPart->x = x;
+						levelPart->y = y;
+						levelPart->id = IDPlayer;
+						levelMeta->parts++;
 						break;
 				}
 			}
@@ -381,6 +343,9 @@ bool CLevelPackFile_parseText(CLevelPackFile *LevelPackFile, int* text, int maxW
 
 bool CLevelPackFile_loadFile(CLevelPackFile* LevelPackFile, int Level , int maxWidth, int maxHeight, bool MetaOnly)
 {
+#ifdef DEBUG
+	StartDebugSpeed(5);
+#endif
 	bool Result = false;
 	LevelPackFile->LevelCount = 0;
 	LevelPackFile->Loaded = false;
@@ -388,6 +353,9 @@ bool CLevelPackFile_loadFile(CLevelPackFile* LevelPackFile, int Level , int maxW
 	memset(LevelPackFile->set, 0, MAXSETLEN);
 	Result = CLevelPackFile_parseText(LevelPackFile, LevelPacks[Level], maxWidth, maxHeight, MetaOnly);		
 	LevelPackFile->Loaded = true;
+#ifdef DEBUG
+	StopDebugSpeed(5);
+#endif
 	return Result;
 }
 

@@ -196,8 +196,9 @@ void StageSelect()
 		strcat(Debug, Nr);
 		set_multiply_color(make_color_rgb(255,0,255));
 		print_at(0,10,Debug);
-		printDebugSpeed(1, 0,60,"LVL LOAD", 1.0);
-		printDebugSpeed(2, 0,80,"FRAME S", 1.0);
+		printDebugSpeed(1, 0,60,"LVL LOAD ", 1.0);
+		printDebugSpeed(2, 0,80,"FRAME S ", 1.0);
+		printDebugSpeed(5, 0,120,"PACK LOAD ", 1.0);
         set_multiply_color(color_white);
 #endif
 		end_frame();
