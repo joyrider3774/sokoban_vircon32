@@ -133,9 +133,9 @@ void TitleScreen()
 			draw_rectangle(50*UI_WIDTH_SCALE,70*UI_HEIGHT_SCALE,270*UI_WIDTH_SCALE,170*UI_HEIGHT_SCALE);		
 			draw_rectangle(51*UI_WIDTH_SCALE,71.5*UI_HEIGHT_SCALE,269*UI_WIDTH_SCALE,169*UI_HEIGHT_SCALE);
 			set_multiply_color(color_white);
-			strcpy(Tekst,"Play Selected LevelPack\n");
+			strcpy(Tekst,"Play Selected LevelPack\n<");
 			strcat(Tekst,LevelPackName);
-			strcat(Tekst,"\nCredits");
+			strcat(Tekst,">\nCredits");
 			WriteText(RobotoSmall,Tekst,80*UI_WIDTH_SCALE,87*UI_HEIGHT_SCALE,MenuTextColor);
 			if (Selection > 1)
 			{
