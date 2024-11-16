@@ -1059,21 +1059,22 @@ bool CWorldParts_LoadFromLevelPackFile(CWorldParts* WorldParts, CLevelPackFile* 
 	if(level <= LPFile->LevelCount)
 	{
 		int lvl = level-1;
+		LevelMeta* meta = &LPFile->LevelsMeta[lvl];
 		WorldParts->DisableSorting=true;
 		WorldParts->Pushes = 0;
 		WorldParts->Moves = 0;
-		int Xi = ((NrOfCols-1) / 2) - ( LPFile->LevelsMeta[lvl].maxx +  LPFile->LevelsMeta[lvl].minx) / 2;
-		int Yi = ((NrOfRows-1) / 2) - ( LPFile->LevelsMeta[lvl].maxy +  LPFile->LevelsMeta[lvl].miny) / 2;
+		int Xi = ((NrOfCols-1) / 2) - ( meta->maxx +  meta->minx) / 2;
+		int Yi = ((NrOfRows-1) / 2) - ( meta->maxy +  meta->miny) / 2;
 		if(!doCenterLevel)
 		{
 			Xi = 0;
 			Yi = 0;
 		}
 
-		LevelPart * Part;
-		for (int i=0; i< LPFile->LevelsMeta[lvl].parts; i++ )
+		int i = 0;
+		LevelPart * Part = &LPFile->Levels[lvl][i];
+		while (i< meta->parts)
 		{
-			Part = &LPFile->Levels[lvl][i];
 			switch(Part->id)
 			{
 				case IDWall:
@@ -1090,6 +1091,8 @@ bool CWorldParts_LoadFromLevelPackFile(CWorldParts* WorldParts, CLevelPackFile* 
 					CWorldParts_Add(WorldParts, WorldParts->Player);
 					break;
 			}
+			i++;
+			Part++;
 		}
 		CWorldParts_AddFloors(WorldParts, WorldParts->Player);
 		WorldParts->DisableSorting=false;
