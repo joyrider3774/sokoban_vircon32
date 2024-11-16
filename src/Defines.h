@@ -1,7 +1,7 @@
 #ifndef DEFINES_H
 #define DEFINES_H
 
-//#define DEBUG 1
+#define DEBUG 1
 
 #define ORIG_WINDOW_WIDTH 640
 #define ORIG_WINDOW_HEIGHT 360 
@@ -38,16 +38,10 @@
 
 #define GSTitleScreen 1 
 #define GSCredits 2
-#define GSIntro 3 
-#define GSQuit 4 
-#define GSGame 5 
-#define GSStageClear 6 
-#define GSStageSelect 7 
-#define GSLevelEditor 8 
-#define GSLevelEditorMenu 9 
-#define GSJoystickSetup 10
-
-#define NROFBUTTONS 12
+#define GSQuit 3 
+#define GSGame 4 
+#define GSStageClear 5 
+#define GSStageSelect 6 
 
 #define BUT_UP 0
 #define BUT_RIGHT 1
