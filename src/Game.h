@@ -234,6 +234,7 @@ void Game()
 					SelectedLevel++;
 					SaveUnlockData();
 					GameState = GSStageSelect;
+					CAudio_StopMusic();
 					CInput_Reset(Input);
 				}
 				else
@@ -243,6 +244,7 @@ void Game()
 					strcat(Msg,"\nis now finished, try out another one!\nPress (A) to continue");
 					PrintForm(Msg);
 					GameState = GSTitleScreen;
+					CAudio_StopMusic();
 					CInput_Reset(Input);
 				}
 			}
@@ -251,6 +253,7 @@ void Game()
 				strcat(Msg,"\n\nPress (A) to continue");
 				PrintForm(Msg);
 				GameState = GSStageSelect;
+				CAudio_StopMusic();
 				CInput_Reset(Input);
 
 			}
