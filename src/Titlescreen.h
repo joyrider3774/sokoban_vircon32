@@ -32,14 +32,15 @@ void TitleScreen()
 		{
 			if(Selection==2)
 				if (InstalledLevelPacksCount > 0)
-					if(SelectedLevelPack > 0)
-					{
-						SelectedLevelPack--;
-						strcpy(LevelPackName,InstalledLevelPacks[SelectedLevelPack]);									
-						CLevelPackFile_loadFile(LevelPackFile, SelectedLevelPack, NrOfCols, NrOfRows, true);									
-						CAudio_PlaySound(Sounds[SND_MENU],0);
-						SaveSettings();
-					}
+				{
+					SelectedLevelPack--;
+					if(SelectedLevelPack < 0)
+						SelectedLevelPack = InstalledLevelPacksCount - 1;
+					strcpy(LevelPackName,InstalledLevelPacks[SelectedLevelPack]);									
+					CLevelPackFile_loadFile(LevelPackFile, SelectedLevelPack, NrOfCols, NrOfRows, true);									
+					CAudio_PlaySound(Sounds[SND_MENU],0);
+					SaveSettings();
+				}
 			CInput_Delay(Input);
 		}
 
@@ -47,14 +48,15 @@ void TitleScreen()
 		{
 			if (Selection==2)
 				if (InstalledLevelPacksCount > 0)
-					if(SelectedLevelPack < InstalledLevelPacksCount-1)
-					{
-						SelectedLevelPack++;
-						strcpy(LevelPackName,InstalledLevelPacks[SelectedLevelPack]);
-						CLevelPackFile_loadFile(LevelPackFile, SelectedLevelPack, NrOfCols, NrOfRows, true);
-						CAudio_PlaySound(Sounds[SND_MENU],0);
-						SaveSettings();
-					}
+				{
+					SelectedLevelPack++;
+					if(SelectedLevelPack > InstalledLevelPacksCount-1)
+						SelectedLevelPack = 0;
+					strcpy(LevelPackName,InstalledLevelPacks[SelectedLevelPack]);
+					CLevelPackFile_loadFile(LevelPackFile, SelectedLevelPack, NrOfCols, NrOfRows, true);
+					CAudio_PlaySound(Sounds[SND_MENU],0);
+					SaveSettings();
+				}
 			CInput_Delay(Input);
 		}
 
@@ -114,6 +116,18 @@ void TitleScreen()
 							PrintForm(Tekst);
 							CInput_Reset(Input);
 						}
+					}
+					break;
+				case 2:
+					if (InstalledLevelPacksCount > 0)
+					{
+						SelectedLevelPack++;
+						if(SelectedLevelPack > InstalledLevelPacksCount-1)
+							SelectedLevelPack = 0;
+						strcpy(LevelPackName,InstalledLevelPacks[SelectedLevelPack]);
+						CLevelPackFile_loadFile(LevelPackFile, SelectedLevelPack, NrOfCols, NrOfRows, true);
+						CAudio_PlaySound(Sounds[SND_MENU],0);
+						SaveSettings();
 					}
 					break;
 				case 3:
