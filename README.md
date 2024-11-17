@@ -1,13 +1,13 @@
 # Vircoban
 ![DownloadCountTotal](https://img.shields.io/github/downloads/joyrider3774/sokoban_vircon32/total?label=total%20downloads&style=plastic) ![DownloadCountLatest](https://img.shields.io/github/downloads/joyrider3774/sokoban_vircon32/latest/total?style=plastic) ![LatestVersion](https://img.shields.io/github/v/tag/joyrider3774/Sokoban?label=Latest%20version&style=plastic) ![License](https://img.shields.io/github/license/joyrider3774/Sokoban?style=plastic)
 
-Vircoban for vircon32 is a remake of the classic sokoban game. 
+Vircoban for vircon32 is a remake of the classic Sokoban game. 
 You as the player need to push boxes to specific locations in the level. 
 Once all boxes are pushed to the correct spots the level is finished. 
 Vircoban is basically a sokoban engine, it contains all the game rules and has the ability to use (asci) level packs. 
 The game engine also has an undo system up to 1000 moves
 
-This version is a cleanup of my old Sokoban gp2x version, using open source assets and adapted code
+This version is a cleanup / port of my old Sokoban gp2x version, using open source assets and adapted code
 
 ## Screenshots
 ![screenshot 1](screenshots/screenshot1.png)
@@ -22,15 +22,15 @@ This version is a cleanup of my old Sokoban gp2x version, using open source asse
 
 ## Playing the Game:
 Vircoban Will start up at a main menu, here you can choose the level pack you wish to play by using left and right when the level pack name is selected (it's between "<>" signs).
-When a level pack is loaded either for game play, the level selector will show up. Here you select what level you wish to play, if it has been unlocked yet.
-After you solved a level one extra level will be unlocked. you always have to solve to last unlocked level in order to unlock the next one.
+When a level pack is loaded for game play, the level selector will show up. Here you select what level you wish to play, if it has been unlocked yet. By default the selector will show the last unlocked level.
+After you solved a level one extra level will be unlocked. you always have to solve to last unlocked level in order to unlock the next one. If you are new to Sokoban, i suggest starting with the SokWhole levels.
 
 ## Controls
 
 | Button | Action |
 | ------ | ------ |
 | DPAD |	move main player, select menus |
-| A |	Confirm in menus, level selector and questions asked, place a part in the level editor |
+| A |	Confirm in menus, level selector and questions asked, Undo moves during gameplay |
 | B | Quit to title screen on the level selector, Quit to level selector in game mode. |
 | Y | during gameplay restart the level |
 | X | Cancel in questions asked |
