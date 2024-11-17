@@ -1,5 +1,5 @@
 # Vircoban
-![DownloadCountTotal](https://img.shields.io/github/downloads/joyrider3774/sokoban_vircon32/total?label=total%20downloads&style=plastic) ![DownloadCountLatest](https://img.shields.io/github/downloads/joyrider3774/sokoban_vircon32/latest/total?style=plastic) ![LatestVersion](https://img.shields.io/github/v/tag/joyrider3774/Sokoban?label=Latest%20version&style=plastic) ![License](https://img.shields.io/github/license/joyrider3774/Sokoban?style=plastic)
+![DownloadCountTotal](https://img.shields.io/github/downloads/joyrider3774/sokoban_vircon32/total?label=total%20downloads&style=plastic) ![DownloadCountLatest](https://img.shields.io/github/downloads/joyrider3774/sokoban_vircon32/latest/total?style=plastic) ![LatestVersion](https://img.shields.io/github/v/tag/joyrider3774/sokoban_vircon32?label=Latest%20version&style=plastic) ![License](https://img.shields.io/github/license/joyrider3774/Sokoban?style=plastic)
 
 Vircoban for vircon32 is a remake of the classic Sokoban game. 
 You as the player need to push boxes to specific locations in the level. 
