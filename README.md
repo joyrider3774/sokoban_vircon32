@@ -141,19 +141,19 @@ Below you can find all authors and details for the different .sok files that is 
 
 #### SokEvo.sok
 - Author: Lee J Haywood
-- Homepage:  https://leehaywood.org/games/sokoban
+- Homepage:  https://ljhaywood.uk/games/sokoban
 
 #### SokHard.sok
 - Author: Lee J Haywood
-- Homepage:  https://leehaywood.org/games/sokoban
+- Homepage:  https://ljhaywood.uk/games/sokoban
 
 #### SokWhole.sok
 - Author: Lee J Haywood
-- Homepage:  https://leehaywood.org/games/sokoban
+- Homepage:  https://ljhaywood.uk/games/sokoban
 
 #### LOMA.sok
 - Author: Lee J Haywood
-- Homepage:  https://leehaywood.org/games/sokoban
+- Homepage:  https://ljhaywood.uk/games/sokoban
 
 #### Erim Sever Collection.sok
 - Author: Erim Sever
